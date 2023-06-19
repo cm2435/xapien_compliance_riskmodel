@@ -1,9 +1,6 @@
 from datetime import datetime
-from typing import List, Union
-
-import matplotlib.pyplot as plt
+from typing import List
 import numpy as np
-import pandas as pd
 from matplotlib.dates import date2num
 from sklearn.cluster import DBSCAN
 

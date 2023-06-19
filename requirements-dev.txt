@@ -1,0 +1,13 @@
+pandas 
+numpy
+pytest
+black
+pathlib
+spacy
+networkx
+matplotlib
+scikitlearn
+sentence_transformers
+bertopic
+streamlit
+openai
