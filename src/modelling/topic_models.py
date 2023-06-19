@@ -1,8 +1,9 @@
 from typing import List
+
 import numpy as np
+from bertopic import BERTopic
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-from bertopic import BERTopic
 
 
 class TopicModel:
@@ -53,7 +54,9 @@ class TopicModel:
 
         return topic_df
 
-    def find_duplicates(self, titles: List[str], title_docs: List[str], max_return: int = 5):
+    def find_duplicates(
+        self, titles: List[str], title_docs: List[str], max_return: int = 5
+    ):
         """
         Find duplicates based on title similarity.
 
@@ -68,16 +71,18 @@ class TopicModel:
 
         title_embedding = self.embedding_model.encode(titles)
         embeddings = self.embedding_model.encode(title_docs)
-        similarity_matrix = cosine_similarity(embeddings, np.average(title_embedding, axis=0).reshape(1, -1))
+        similarity_matrix = cosine_similarity(
+            embeddings, np.average(title_embedding, axis=0).reshape(1, -1)
+        )
 
         topic_list = []
         for i, title in enumerate(title_docs):
-            #Do not append duplicates
+            # Do not append duplicates
             duplicate = False
             for tuple_item in topic_list:
                 if title == tuple_item[0]:
-                    duplicate = True 
-            if not duplicate: 
+                    duplicate = True
+            if not duplicate:
                 topic_list.append((title, similarity_matrix[i][0]))
 
-        return sorted(topic_list, key=lambda x: x[1], reverse= True)[:max_return]
+        return sorted(topic_list, key=lambda x: x[1], reverse=True)[:max_return]

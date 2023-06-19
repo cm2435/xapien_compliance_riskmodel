@@ -1,10 +1,12 @@
+from datetime import datetime
+from typing import List, Union
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from datetime import datetime
 from matplotlib.dates import date2num
 from sklearn.cluster import DBSCAN
-from typing import List, Union 
+
 
 class TemporalModel:
     """
@@ -99,7 +101,7 @@ class TemporalModel:
         return min_date <= converted_date <= max_date
 
     @staticmethod
-    def _convert_dates(dates : List[dict]):
+    def _convert_dates(dates: List[dict]):
         """
         Convert the date dictionaries to datetime objects.
 

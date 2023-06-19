@@ -1,17 +1,18 @@
+import json
+from datetime import datetime
+from typing import List
+
+import matplotlib.pyplot as plt
+import networkx as nx
 import numpy as np
 import pandas as pd
-import json
-from typing import List 
-import networkx as nx 
-import matplotlib.pyplot as plt 
-from datetime import datetime
 from matplotlib.dates import date2num
 from sklearn.cluster import DBSCAN
 
-from .modelling.temporal import TemporalModel
-from .modelling.topic_models import TopicModel
 from .modelling.llm_wrapper import ChatGPTWrapper
 from .modelling.ner_graph import NerNetworkModel
+from .modelling.temporal import TemporalModel
+from .modelling.topic_models import TopicModel
 
 
 class RiskEngineBase:
@@ -77,9 +78,9 @@ class RiskEngineBase:
             output_schema["news_bursts"] = self.temporal_model.fitted_intervals
 
         if kwargs.get("ner_graph", True):
-            output_schema['ner_graph'] = self.ner_model.extract_verb_triplets(
+            output_schema["ner_graph"] = self.ner_model.extract_verb_triplets(
                 text=df["full_text"],
-                entity_types=["PERSON", "NORP", "FAC", "ORG", "EVENT", "LAW"]
+                entity_types=["PERSON", "NORP", "FAC", "ORG", "EVENT", "LAW"],
             )
 
         # Postprocess the topic model to get the key semantic topics
@@ -87,7 +88,7 @@ class RiskEngineBase:
         for topic in df.topic.unique():
             if topic != -1:  # Filter out the 'non-topic' label
                 filtered_df = df[df.topic == topic]
-                
+
                 topic_dict = {
                     "theme": filtered_df["representation"].values[0],
                     "top_titles": filtered_df["representative_docs"].tolist()[0],
@@ -99,20 +100,19 @@ class RiskEngineBase:
                     gpt_description = self.llm_wrapper.predict(
                         titles=filtered_df["representative_docs"].tolist(),
                         articles=None,
-                        task="summary"
+                        task="summary",
                     )
                     if gpt_description != "<FAILED>":
-                        topic_dict['theme'] = gpt_description
-                
+                        topic_dict["theme"] = gpt_description
+
                 topic_dict["top_snippets"] = self.topic_model.find_duplicates(
                     titles=filtered_df["representative_docs"].tolist()[0],
-                    title_docs = filtered_df["snippet"].tolist()
+                    title_docs=filtered_df["snippet"].tolist(),
                 )
                 output_schema["topics"].append(topic_dict)
 
         # Rank articles for each topic found
         return output_schema
-
 
     def visualise_graph(self, triplets: List[List[str]]):
         # Create a directed graph with triplet data
@@ -139,7 +139,7 @@ class RiskEngineBase:
 
     def plot_dates(self, data: dict):
         df = self._parse_company_data(data)
-        dates = df['date'].tolist()
+        dates = df["date"].tolist()
         converted_dates = []
 
         for date in dates:
@@ -149,7 +149,9 @@ class RiskEngineBase:
                 converted_dates.append(converted_date)
 
         # Perform temporal clustering using DBSCAN
-        clustering = DBSCAN(eps=365/2, min_samples=5).fit(date2num(converted_dates).reshape(-1, 1))
+        clustering = DBSCAN(eps=365 / 2, min_samples=5).fit(
+            date2num(converted_dates).reshape(-1, 1)
+        )
         # Create a mapping of dates to cluster labels
         date_clusters = []
         for i, label in enumerate(clustering.labels_):
@@ -159,31 +161,38 @@ class RiskEngineBase:
 
         # Plotting the converted dates with highlighted clusters
         plt.figure(figsize=(8, 6))
-        for label in df['label_temporal'].unique():
-            cluster_dates = df[df['label_temporal'] == label]['date']
-            cluster_converted_dates = [datetime.strptime(f"{date.strftime('%Y-%b-%d')}", "%Y-%b-%d") for date in
-                                       cluster_dates if date is not None]
-            plt.scatter(cluster_converted_dates, range(len(cluster_converted_dates)), marker='o',
-                        label=f'Cluster {label}')
+        for label in df["label_temporal"].unique():
+            cluster_dates = df[df["label_temporal"] == label]["date"]
+            cluster_converted_dates = [
+                datetime.strptime(f"{date.strftime('%Y-%b-%d')}", "%Y-%b-%d")
+                for date in cluster_dates
+                if date is not None
+            ]
+            plt.scatter(
+                cluster_converted_dates,
+                range(len(cluster_converted_dates)),
+                marker="o",
+                label=f"Cluster {label}",
+            )
 
-        plt.xlabel('Date')
+        plt.xlabel("Date")
         plt.ylabel("")
-        plt.title('Dates on a Number Line')
+        plt.title("Dates on a Number Line")
         plt.legend()
         plt.show()
+
 
 if __name__ == "__main__":
     import openai
 
     risk_engine = RiskEngineBase()
-    with open("/Users/charliemasters/Desktop/xapien_compliance_riskmodel/data/NiramaxTextData.json", "r") as f:
+    with open(
+        "/Users/charliemasters/Desktop/xapien_compliance_riskmodel/data/NiramaxTextData.json",
+        "r",
+    ) as f:
         file = json.load(f)
 
     output = risk_engine.model_risk(
-        data=file,
-        temporal_model=True,
-        topic_model=True,
-        ner_graph=True,
-        use_gpt=False
+        data=file, temporal_model=True, topic_model=True, ner_graph=True, use_gpt=False
     )
     print(output)

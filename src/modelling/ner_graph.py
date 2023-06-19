@@ -1,14 +1,16 @@
-import networkx as nx 
-import spacy 
-from typing import List
-import networkx as nx
-import matplotlib.pyplot as plt 
 import sys
+from typing import List
+
+import matplotlib.pyplot as plt
+import networkx as nx
+import spacy
+
+
 class NerNetworkModel:
-    '''
-    '''
-    def __init__(self): 
-        if 'en_core_web_sm' not in spacy.util.get_installed_models():
+    """ """
+
+    def __init__(self):
+        if "en_core_web_sm" not in spacy.util.get_installed_models():
             try:
                 # Try to download the model
                 print("downloading spacy package en_core_web_sm")
@@ -16,14 +18,14 @@ class NerNetworkModel:
             except Exception as e:
                 print("Error downloading 'en_core_web_sm' model:", e)
                 sys.exit(1)
-            
+
         self.ner_model = spacy.load("en_core_web_sm")
-    
+
     def extract_verb_triplets(
-        self, 
-        text : List[str], 
-        entity_types : List[str] = ["PERSON", "NORP", "FAC", "ORG", "EVENT", "LAW"]
-    ): 
+        self,
+        text: List[str],
+        entity_types: List[str] = ["PERSON", "NORP", "FAC", "ORG", "EVENT", "LAW"],
+    ):
         triplets = []
         # Process the sentence with spaCy
         for sentence in text:
@@ -38,5 +40,4 @@ class NerNetworkModel:
                         object_ = token.text
                         triplets.append((subject, relation, object_))
 
-        return triplets 
-    
+        return triplets

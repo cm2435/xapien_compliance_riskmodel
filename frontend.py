@@ -1,16 +1,17 @@
-import streamlit as st
-from src.main import RiskEngineBase
-import json 
-import openai 
+import json
 from typing import List
+
+import openai
 import pandas as pd
+import streamlit as st
+
+from src.main import RiskEngineBase
 
 # Instantiate the RiskEngineBase class
 risk_engine = RiskEngineBase()
 
-def visualize_topics(topics):
-    pd.set_option("display.max_colwidth", None)  # Set the display width to unlimited
 
+def visualize_topics(topics):
     for topic in topics:
         st.subheader(topic["theme"])
         st.write("Top Titles:")
@@ -19,8 +20,11 @@ def visualize_topics(topics):
         st.write("Extracted Keywords:")
         st.write("- " + topic["extracted_keywords"])
         st.write("Top Snippets:")
-        snippets_df = pd.DataFrame(topic["top_snippets"], columns=["Snippet", "Score"])
-        st.dataframe(snippets_df)
+        for snippet, score in topic["top_snippets"]:
+            st.write("- Snippet:", snippet)
+            st.write("  Score:", score)
+            st.write("")  # Add an empty line for spacing
+
 
 
 # Define the Streamlit app
@@ -60,4 +64,5 @@ def main():
 
 # Run the Streamlit app
 if __name__ == "__main__":
+    openai.api_key = ""
     main()

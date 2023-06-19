@@ -1,7 +1,6 @@
-import openai
+import time
 
 import openai
-import time
 
 
 def invoke_chatgpt(prompt):
