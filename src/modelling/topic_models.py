@@ -47,7 +47,9 @@ class TopicModel:
             self.fit(topic_text)
 
         topic_df = self.topic_model.get_document_info(topic_text)
+        representative_docs = self.topic_model.get_representative_docs()
         topic_df.columns = topic_df.columns.str.lower()
+        topic_df["representative_docs"] = topic_df["topic"].map(representative_docs)
 
         return topic_df
 
@@ -63,12 +65,19 @@ class TopicModel:
         Returns:
             list: Sorted list of duplicate titles with similarity scores.
         """
-        embeddings = self.embedding_model.encode(titles)
-        title_embedding = self.embedding_model.encode(title_docs)
+
+        title_embedding = self.embedding_model.encode(titles)
+        embeddings = self.embedding_model.encode(title_docs)
         similarity_matrix = cosine_similarity(embeddings, np.average(title_embedding, axis=0).reshape(1, -1))
 
         topic_list = []
-        for i, title in enumerate(titles):
-            topic_list.append((title, similarity_matrix[i][0]))
+        for i, title in enumerate(title_docs):
+            #Do not append duplicates
+            duplicate = False
+            for tuple_item in topic_list:
+                if title == tuple_item[0]:
+                    duplicate = True 
+            if not duplicate: 
+                topic_list.append((title, similarity_matrix[i][0]))
 
-        return sorted(topic_list, key=lambda x: x[1])[:max_return]
+        return sorted(topic_list, key=lambda x: x[1], reverse= True)[:max_return]
