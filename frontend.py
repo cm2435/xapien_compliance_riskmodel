@@ -1,18 +1,20 @@
 import json
+from pathlib import Path
 from typing import List
 
 import openai
 import pandas as pd
 import streamlit as st
+import yaml
 
 from src.main import RiskEngineBase
-from pathlib import Path
-import yaml
+
 
 def load_yaml_file(file_path):
     with Path(file_path).open() as file:
         data = yaml.safe_load(file)
     return data
+
 
 def visualize_topics(topics):
     for topic in topics:
@@ -29,13 +31,11 @@ def visualize_topics(topics):
             st.write("")  # Add an empty line for spacing
 
 
-
 # Define the Streamlit app
 def main():
-
     # Example usage
     yaml_file_path = "config.yaml"
-    yaml_data = load_yaml_file(yaml_file_path)['frontend']
+    yaml_data = load_yaml_file(yaml_file_path)["frontend"]
 
     st.title("Risk Engine Dashboard")
 
@@ -47,17 +47,17 @@ def main():
         # Run the risk model
         risk_model_output = risk_engine.model_risk(
             data=data,
-            temporal_model=yaml_data['temporal_model'],
-            topic_model=yaml_data['topic_model'],
-            ner_graph=yaml_data['ner_model'],
-            use_gpt=yaml_data['use_gpt']
+            temporal_model=yaml_data["temporal_model"],
+            topic_model=yaml_data["topic_model"],
+            ner_graph=yaml_data["ner_model"],
+            use_gpt=yaml_data["use_gpt"],
         )
 
         # Display the output JSON
         st.subheader("Risk Model Output")
         st.json(risk_model_output)
 
-        visualize_topics(risk_model_output['topics'])
+        visualize_topics(risk_model_output["topics"])
         # Visualize the NER Graph
         st.subheader("NER Graph Visualization")
         ner_graph = risk_model_output.get("ner_graph")
@@ -69,6 +69,7 @@ def main():
         st.subheader("Temporal Clustering Plot")
         temporal_clustering_plot = risk_engine.plot_dates(data)
         st.pyplot(temporal_clustering_plot)
+
 
 # Run the Streamlit app
 if __name__ == "__main__":

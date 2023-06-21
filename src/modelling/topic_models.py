@@ -1,9 +1,11 @@
 from typing import List
+
 import numpy as np
+import pandas as pd
 from bertopic import BERTopic
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-import pandas as pd
+
 
 class TopicModel:
     """
@@ -16,7 +18,9 @@ class TopicModel:
     """
 
     def __init__(self):
-        self.embedding_model: SentenceTransformer = SentenceTransformer("all-MiniLM-L6-v2")
+        self.embedding_model: SentenceTransformer = SentenceTransformer(
+            "all-MiniLM-L6-v2"
+        )
         self.topic_model: BERTopic = BERTopic(embedding_model=self.embedding_model)
         self._is_fitted: bool = False
 
@@ -57,7 +61,7 @@ class TopicModel:
         self, titles: List[str], title_docs: List[str], max_return: int = 5
     ) -> List[str]:
         """
-        Find the most relevent snippets to the indicative headlines extracted for a topic by ranking 
+        Find the most relevent snippets to the indicative headlines extracted for a topic by ranking
         them based on semantic similarity.
 
         Args:

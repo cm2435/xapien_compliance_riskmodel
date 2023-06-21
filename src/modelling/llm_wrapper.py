@@ -19,7 +19,7 @@ class ChatGPTWrapper:
         self._assistant_prompt = "You are a helpful expert assistant being asked to analyse the risk of news for a client. The news data will be text based and focus on a specific company. The goal is to help a layperson be able to understand what a company may be involved with and when. It is vital to catch risky dealings of companies we analyse. \n\nIf the company is mentioned in an article, it does not mean it is necessarily risky. For example, a fraud-prosecuting law firm is not risky, a company being prosecuted for fraud is risky. \n\n"
         self.prompt_templates = json.load(
             open(str(Path(__file__).parent / "prompt_store.json"), "rb")
-        )  
+        )
 
     def predict(
         self, titles: Union[List[str], str], articles: Union[List[str], str], task: str
@@ -35,7 +35,9 @@ class ChatGPTWrapper:
         Returns:
             Union[str, None]: The generated prediction or None if unsuccessful.
         """
-        assert task in self.prompt_templates.keys(), "This task is not supported for prompting currently."
+        assert (
+            task in self.prompt_templates.keys()
+        ), "This task is not supported for prompting currently."
         prompt = self._parse_prompt(titles=titles, bodies=articles, task=task)
         response = self.invoke_chatgpt(prompt=prompt)
         print(response)
@@ -58,12 +60,13 @@ class ChatGPTWrapper:
         Returns:
             Union[str, None]: The generated response or None if unsuccessful.
         """
-        assert openai.api_key is not None, \
-                """
+        assert (
+            openai.api_key is not None
+        ), """
                 To use this model, an openAI api key must have been set in the environment previously
                 Please verify that this is the case.
-                """   
-        
+                """
+
         retry_count = 0
         while retry_count < max_retries:
             try:

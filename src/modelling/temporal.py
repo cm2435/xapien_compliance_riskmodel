@@ -1,8 +1,10 @@
 from datetime import datetime
 from typing import List
+
 import numpy as np
 from matplotlib.dates import date2num
 from sklearn.cluster import DBSCAN
+
 
 class TemporalModel:
     """
@@ -55,7 +57,7 @@ class TemporalModel:
 
     def predict(self, dates: List[dict]) -> List[int]:
         """
-        Predict cluster labels for a series of dates in dictionary form 
+        Predict cluster labels for a series of dates in dictionary form
 
         Args:
             dates (list): List of date dictionaries.
@@ -70,7 +72,9 @@ class TemporalModel:
         date_labels: List[int] = []
         for date in dates:
             if date is None:
-                date_labels.append(-2)  # Not a news cycle label, but not -1 as this would be for a date that is present but is normal news
+                date_labels.append(
+                    -2
+                )  # Not a news cycle label, but not -1 as this would be for a date that is present but is normal news
             else:
                 cluster_label = self._get_cluster_label(date)
                 date_labels.append(cluster_label)
@@ -95,7 +99,9 @@ class TemporalModel:
         return cluster_label
 
     @staticmethod
-    def _is_date_within_range(date: dict, min_date: datetime, max_date: datetime) -> bool:
+    def _is_date_within_range(
+        date: dict, min_date: datetime, max_date: datetime
+    ) -> bool:
         """
         Check if a given date falls between a specified max and min
 

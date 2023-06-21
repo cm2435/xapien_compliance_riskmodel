@@ -1,4 +1,4 @@
-pandas 
+pandas
 numpy
 pytest
 black
@@ -6,7 +6,7 @@ pathlib
 spacy
 networkx
 matplotlib
-scikit-learn
+scikit - learn
 sentence_transformers
 bertopic
 streamlit

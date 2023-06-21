@@ -41,7 +41,9 @@ class RiskEngineBase:
         if kwargs.get("topic_model", True):
             unique_titles = df.title.drop_duplicates().values
             topic_df = self.topic_model.get_topics(topic_text=unique_titles)
-            df = pd.merge(df, topic_df, left_on=["title"], right_on=["document"], how="inner")
+            df = pd.merge(
+                df, topic_df, left_on=["title"], right_on=["document"], how="inner"
+            )
             df = df.drop("document", axis=1)
 
         if kwargs.get("ner_graph", True):
@@ -140,7 +142,10 @@ if __name__ == "__main__":
     import openai
 
     risk_engine = RiskEngineBase()
-    with open("/Users/charliemasters/Desktop/xapien_compliance_riskmodel/data/NiramaxTextData.json", "r") as f:
+    with open(
+        "/Users/charliemasters/Desktop/xapien_compliance_riskmodel/data/NiramaxTextData.json",
+        "r",
+    ) as f:
         file = json.load(f)
 
     output = risk_engine.model_risk(
