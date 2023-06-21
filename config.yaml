@@ -1,0 +1,5 @@
+frontend: 
+  temporalmodel : True 
+  topic_model : True
+  ner_graph: True 
+  use_gpt : True

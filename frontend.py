@@ -6,6 +6,13 @@ import pandas as pd
 import streamlit as st
 
 from src.main import RiskEngineBase
+from pathlib import Path
+import yaml
+
+def load_yaml_file(file_path):
+    with Path(file_path).open() as file:
+        data = yaml.safe_load(file)
+    return data
 
 def visualize_topics(topics):
     for topic in topics:
@@ -25,6 +32,11 @@ def visualize_topics(topics):
 
 # Define the Streamlit app
 def main():
+
+    # Example usage
+    yaml_file_path = "config.yaml"
+    yaml_data = load_yaml_file(yaml_file_path)['frontend']
+
     st.title("Risk Engine Dashboard")
 
     # Upload and process data
@@ -35,10 +47,10 @@ def main():
         # Run the risk model
         risk_model_output = risk_engine.model_risk(
             data=data,
-            temporal_model=True,
-            topic_model=True,
-            ner_graph=True,
-            use_gpt=True
+            temporal_model=yaml_data['temporal_model'],
+            topic_model=yaml_data['topic_model'],
+            ner_graph=yaml_data['ner_model'],
+            use_gpt=yaml_data['use_gpt']
         )
 
         # Display the output JSON
@@ -63,5 +75,5 @@ if __name__ == "__main__":
     # Instantiate the RiskEngineBase class
     risk_engine = RiskEngineBase()
 
-    openai.api_key = "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"
+    openai.api_key = "<key_needed_here"
     main()
