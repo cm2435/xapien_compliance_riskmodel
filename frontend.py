@@ -7,10 +7,6 @@ import streamlit as st
 
 from src.main import RiskEngineBase
 
-# Instantiate the RiskEngineBase class
-risk_engine = RiskEngineBase()
-
-
 def visualize_topics(topics):
     for topic in topics:
         st.subheader(topic["theme"])
@@ -64,5 +60,8 @@ def main():
 
 # Run the Streamlit app
 if __name__ == "__main__":
-    openai.api_key = ""
+    # Instantiate the RiskEngineBase class
+    risk_engine = RiskEngineBase()
+
+    openai.api_key = "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"
     main()

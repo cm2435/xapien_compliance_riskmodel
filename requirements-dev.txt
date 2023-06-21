@@ -6,7 +6,7 @@ pathlib
 spacy
 networkx
 matplotlib
-scikitlearn
+scikit-learn
 sentence_transformers
 bertopic
 streamlit

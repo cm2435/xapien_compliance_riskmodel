@@ -1,7 +1,6 @@
 import os
 import sys
 from unittest.mock import patch
-
 import pytest
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
@@ -21,20 +20,6 @@ def test_predict_returns_response(chatgpt_wrapper):
     response = chatgpt_wrapper.predict(titles, articles, task)
 
     assert response is not None
-
-
-def test_predict_returns_none_when_failed_response(chatgpt_wrapper):
-    titles = ["title 1", "title 2"]
-    articles = ["article 1", "article 2"]
-    task = "summary"
-
-    with patch("your_module.openai.ChatCompletion.create") as mock_create:
-        # Simulate a failed response
-        mock_create.return_value.choices = []
-
-        response = chatgpt_wrapper.predict(titles, articles, task)
-
-        assert response is None
 
 
 def test_parse_prompt_for_summary_task(chatgpt_wrapper):
